@@ -246,7 +246,7 @@ Future<dynamic> performAppointmentSubmit(
     throw Exception('Failed to load');
   }
 }
-Future<dynamic> performAppointmentSubmitNewVersion(
+Future<int> performAppointmentSubmitNewVersion(
     String AUTH,
     String patient_id,
     String dr_id,
@@ -298,7 +298,7 @@ Future<dynamic> performAppointmentSubmitNewVersion(
     }),
   );
   print(response.body);
-
+  return response.statusCode;
   if (response.statusCode == 200) {
     return json.decode(response.body);
   } else {

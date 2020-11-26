@@ -3821,6 +3821,7 @@ class _EarningWidthDrawWidgetState extends State<EarningWidthDrawWidget> {
 }
 
 class HomeVisitWidget extends StatefulWidget {
+  List appointments = [];
   @override
   _HomeVisitWidgetState createState() => _HomeVisitWidgetState();
 }
@@ -3848,7 +3849,7 @@ class _HomeVisitWidgetState extends State<HomeVisitWidget> {
     //showThisToast((response.statusCode).toString());
   }
 
-  List appointments = [];
+
 
   Future<String> getData() async {
     final http.Response response = await http.post(
@@ -3860,9 +3861,9 @@ class _HomeVisitWidgetState extends State<HomeVisitWidget> {
       body: jsonEncode(<String, String>{'user_type': 'doctor', 'id': UID}),
     );
     this.setState(() {
-      appointments = json.decode(response.body);
+      widget.appointments = json.decode(response.body);
       //showThisToast(appointments.length.toString());
-      print(appointments.toString());
+      print(widget.appointments.toString());
     });
     return "Success!";
   }
@@ -3901,7 +3902,7 @@ class _HomeVisitWidgetState extends State<HomeVisitWidget> {
         ),
         actions: <Widget>[
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 30, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 25, 0),
             child: Checkbox(
               value: homeVisits,
               onChanged: _onRememberMeChanged,
@@ -3909,62 +3910,62 @@ class _HomeVisitWidgetState extends State<HomeVisitWidget> {
           )
         ],
       ),
-      body: ((appointments.length > 0)
+      body: ((widget.appointments.length > 0)
           ? new ListView.builder(
               reverse: true,
               shrinkWrap: true,
-              itemCount: appointments == null ? 0 : appointments.length,
+              itemCount: widget.appointments == null ? 0 :widget. appointments.length,
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(0.0),
                   ),
                   child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: ListTile(
-                        onTap: () async {
-                          setState(() {
-                            appointments[index]["status"] == 0
-                                ? appointments[index]["status"] = 1
-                                : appointments[index]["status"] = 0;
-                          });
+                      padding: EdgeInsets.all(5),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            onTap: () async {
+                              setState(() {
+                                widget. appointments[index]["status"] == 0
+                                    ? widget.appointments[index]["status"] = 1
+                                    : widget.appointments[index]["status"] = 0;
+                              });
 
-                          final http.Response response = await http.post(
-                            _baseUrl + 'change_home_visit_status',
-                            headers: <String, String>{
-                              'Content-Type': 'application/json; charset=UTF-8',
-                              'Authorization': AUTH_KEY,
+                              final http.Response response = await http.post(
+                                _baseUrl + 'change_home_visit_status',
+                                headers: <String, String>{
+                                  'Content-Type': 'application/json; charset=UTF-8',
+                                  'Authorization': AUTH_KEY,
+                                },
+                                body: jsonEncode(<String, String>{
+                                  'status':
+                                  widget.  appointments[index]["status"].toString(),
+                                  'id': (widget.appointments[index]["id"]).toString()
+                                }),
+                              );
+                              // showThisToast((response.statusCode).toString());
+                              this.getData();
                             },
-                            body: jsonEncode(<String, String>{
-                              'status':
-                                  appointments[index]["status"].toString(),
-                              'id': (appointments[index]["id"]).toString()
-                            }),
-                          );
-                          // showThisToast((response.statusCode).toString());
-                          this.getData();
-                        },
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(_baseUrl_image +
-                              appointments[index]["patient_info"]["photo"]),
-                        ),
-                        title: new Text(
-                          appointments[index]["date"],
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: new Text(
-                          appointments[index]["home_address"] +
-                              " , " +
-                              appointments[index]["phone"] +
-                              "\n" +
-                              appointments[index]["problems"],
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        trailing: Checkbox(
-                          value:
-                              appointments[index]["status"] == 0 ? false : true,
-                          onChanged: (bool newValue) async {
-                            /*
+                            leading: Image.network(_baseUrl_image +
+                                widget. appointments[index]["patient_info"]["photo"],fit: BoxFit.cover,height: 50,width: 50,),
+                            title: new Text(
+                              widget. appointments[index]["date"],
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: new Text(
+                              widget.  appointments[index]["home_address"] +
+                                  " , " +
+                                  widget.  appointments[index]["phone"] +
+                                  "\n" +
+                                  widget. appointments[index]["problems"],
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            trailing: Checkbox(
+                              value:
+                              widget.appointments[index]["status"] == 0 ? false : true,
+                              onChanged: (bool newValue) async {
+                                /*
 
                             final http.Response response = await http.post(
                               _baseUrl + 'change_home_visit_status',
@@ -3982,9 +3983,484 @@ class _HomeVisitWidgetState extends State<HomeVisitWidget> {
                             this.getData();
 
                              */
-                          },
-                          //  <-- leading Checkbox
-                        ),
+                              },
+                              //  <-- leading Checkbox
+                            ),
+                          ),
+                          Row(
+                              children: [
+                                Expanded(
+                                  child: Center(
+                                    child: InkWell(
+
+                                      child: Padding(
+                                        padding: EdgeInsets.all(5),
+                                        child: Text("View Details",style: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold),),
+                                      ),
+                                      onTap: (){
+                                       // work here
+                                        print(widget.appointments[index]["all_info"]);
+                                        dynamic all_info = jsonDecode(widget.appointments[index]["all_info"]);
+
+                                        print(widget.appointments[index]["patient_info"]["name"]);
+
+
+
+
+
+                                      //  print(widget.appointments[index].toString());
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Scaffold(
+                                                  appBar: AppBar(
+                                                    iconTheme: new IconThemeData(
+                                                        color: Colors.blue),
+                                                    title: Text(
+                                                      "Appointment Details",
+                                                      style: TextStyle(
+                                                          color: Colors.blue),
+                                                    ),
+                                                    backgroundColor: Colors.white,
+                                                  ),
+                                                  body: SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                          EdgeInsets.all(10),
+                                                          child: Card(
+                                                            elevation: 8,
+                                                            child: Column(
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                  EdgeInsets
+                                                                      .all(10),
+                                                                  child: Stack(
+                                                                    children: [
+                                                                      Align(
+                                                                        alignment:
+                                                                        Alignment
+                                                                            .centerLeft,
+                                                                        child:
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .fromLTRB(
+                                                                              5,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                          child: Text(
+                                                                              "Patient's Historty"),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                        Alignment
+                                                                            .centerRight,
+                                                                        child: Text(
+                                                                          "",
+                                                                          style: TextStyle(
+                                                                              color:
+                                                                              Colors.blue),
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Patient Name"),
+                                                                          subtitle: Text(widget.appointments[index]["patient_info"]["name"]),
+                                                                        )),
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Age and gender"),
+                                                                          subtitle: Text(all_info[
+                                                                          "age"]
+                                                                              .toString() +
+                                                                              " , " +
+                                                                              all_info[
+                                                                              "gender"]),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Date"),
+                                                                          subtitle: Text(
+                                                                              widget.appointments[
+                                                                              index]
+                                                                              [
+                                                                              "date"]),
+                                                                        )),
+                                                                    // Expanded(
+                                                                    //     child:
+                                                                    //     ListTile(
+                                                                    //       title: Text(
+                                                                    //           "Time"),
+                                                                    //       subtitle: Text(
+                                                                    //           widget.appointments[
+                                                                    //           index]
+                                                                    //           [
+                                                                    //           "time"]),
+                                                                    //     )),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        Padding(
+                                                          padding:
+                                                          EdgeInsets.all(10),
+                                                          child: Card(
+                                                            elevation: 8,
+                                                            child: Column(
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                  EdgeInsets
+                                                                      .all(10),
+                                                                  child: Stack(
+                                                                    children: [
+                                                                      Align(
+                                                                        alignment:
+                                                                        Alignment
+                                                                            .centerLeft,
+                                                                        child:
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .fromLTRB(
+                                                                              5,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                          child: Text(
+                                                                              "Medical History"),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                        Alignment
+                                                                            .centerRight,
+                                                                        child: Text(
+                                                                          "",
+                                                                          style: TextStyle(
+                                                                              color:
+                                                                              Colors.blue),
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Reason for Visit"),
+                                                                          subtitle: Text(
+                                                                              all_info[
+                                                                              "reasonToVisit"]),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Condition"),
+                                                                          subtitle: Text(
+                                                                              all_info[
+                                                                              "condition"]),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Medications"),
+                                                                          subtitle: Text(
+                                                                              all_info[
+                                                                              "medications"]),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                          EdgeInsets.all(10),
+                                                          child: Card(
+                                                            elevation: 8,
+                                                            child: Column(
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                  EdgeInsets
+                                                                      .all(10),
+                                                                  child: Stack(
+                                                                    children: [
+                                                                      Align(
+                                                                        alignment:
+                                                                        Alignment
+                                                                            .centerLeft,
+                                                                        child:
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .fromLTRB(
+                                                                              5,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                          child: Text(
+                                                                              "Vitals"),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                        Alignment
+                                                                            .centerRight,
+                                                                        child: Text(
+                                                                          "",
+                                                                          style: TextStyle(
+                                                                              color:
+                                                                              Colors.blue),
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Weight"),
+                                                                          subtitle: Text(
+                                                                              all_info[
+                                                                              "weight"]),
+                                                                        )),
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Temparature"),
+                                                                          subtitle: Text(
+                                                                              all_info[
+                                                                              "temparature"]),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Blood Pressure"),
+                                                                          subtitle: Text(
+                                                                             all_info[
+                                                                              "bloodPressure"]),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                          EdgeInsets.all(10),
+                                                          child: Card(
+                                                            elevation: 8,
+                                                            child: Column(
+                                                              children: [
+                                                                Padding(
+                                                                  padding:
+                                                                  EdgeInsets
+                                                                      .all(10),
+                                                                  child: Stack(
+                                                                    children: [
+                                                                      Align(
+                                                                        alignment:
+                                                                        Alignment
+                                                                            .centerLeft,
+                                                                        child:
+                                                                        Padding(
+                                                                          padding: EdgeInsets
+                                                                              .fromLTRB(
+                                                                              5,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                          child: Text(
+                                                                              "Doctor's Profile"),
+                                                                        ),
+                                                                      ),
+                                                                      Align(
+                                                                        alignment:
+                                                                        Alignment
+                                                                            .centerRight,
+                                                                        child: Text(
+                                                                          "",
+                                                                          style: TextStyle(
+                                                                              color:
+                                                                              Colors.blue),
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Name"),
+                                                                          subtitle: Text(
+                                                                              widget.appointments[index]
+                                                                              [
+                                                                              "patient_info"]
+                                                                              [
+                                                                              "name"]),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                  Colors.grey,
+                                                                  height: 1,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child:
+                                                                        ListTile(
+                                                                          title: Text(
+                                                                              "Consultation Fees"),
+                                                                          //subtitle: Text(widget.fees),
+                                                                          subtitle: Text(
+                                                                              "No Fees"),
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                            padding:
+                                                            EdgeInsets.all(10),
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            ChamberAppointmentPrescriptionWriteWidget(
+                                                                                widget.appointments[index])));
+                                                              },
+                                                              child: Card(
+                                                                color: Colors.blue,
+                                                                child: Center(
+                                                                  child: Padding(
+                                                                    padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                        10),
+                                                                    child: Text(
+                                                                      "Provide a Prescription",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                          18),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            )),
+
+
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )));
+
+
+
+                                      },
+                                    ),
+                                  ),
+                                )
+                              ],
+                          )
+                        ],
                       )),
                 );
               },
@@ -5708,6 +6184,7 @@ class _AddMedicineWidgetState extends State<AddMedicineWidget> {
     );
     medicineList = json.decode(response.body);
     print(medicineList.toString());
+    showThisToast(medicineList.length.toString());
     this.setState(() {
       for (int i = 0; i < medicineList.length; i++) {
         suggestions.add(

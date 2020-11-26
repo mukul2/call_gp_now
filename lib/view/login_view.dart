@@ -2087,6 +2087,12 @@ class _SignupActivityPatientState extends State<SignupActivityPatient> {
                               SharedPreferences.getInstance();
                           SharedPreferences prefs = await _prefs;
                           prefs.setString(
+                              "uphoto", "");
+                          prefs.setString(
+                              "uemail", resp["user_info"]["email"]);
+                          prefs.setString(
+                              "uphoto", resp["user_info"]["photo"]);
+                          prefs.setString(
                               "uid", resp["user_info"]["id"].toString());
                           prefs.setString(
                               "uname", resp["user_info"]["name"].toString());

@@ -60,6 +60,7 @@ dependencies:
   in_app_purchase: ^0.3.4+12
   custom_rounded_rectangle_border: ^0.0.1
   assets_audio_player: ^2.0.13+1
+  provider: ^4.3.2+2
 
   # Cache manager
   flutter_cache_manager: ^1.1.1
