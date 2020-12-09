@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'dart:io' as io;
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:call_gp_now/myCalling/call.dart';
 import 'package:call_gp_now/networking/ApiProvider.dart';
@@ -8,7 +10,6 @@ import 'package:call_gp_now/projPaypal/config.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final TextEditingController _textController;
   final DatabaseReference _messageDatabaseReference;
   final DatabaseReference _messageDatabaseReference_last;
-  final StorageReference _photoStorageReference;
+  final firebase_storage.Reference _photoStorageReference;
 
   bool _isComposing = false;
 
@@ -68,7 +69,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             .reference()
             .child(CLIEND_ID)
             .child("lastChatHistory"),
-        _photoStorageReference = FirebaseStorage.instance.ref().child(
+        _photoStorageReference = firebase_storage.FirebaseStorage.instance.ref().child(
               "chat_photos",
             ) {
     _messageDatabaseReference
@@ -263,10 +264,15 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   void _sendImage(ImageSource imageSource) async {
     File image = await ImagePicker.pickImage(source: imageSource);
     final String fileName = Uuid().v4();
-    StorageReference photoRef = _photoStorageReference.child(fileName);
-    final StorageUploadTask uploadTask = photoRef.putFile(image);
-    final StorageTaskSnapshot downloadUrl = await uploadTask.onComplete;
-    String img_Link = await downloadUrl.ref.getDownloadURL();
+    firebase_storage.Reference photoRef = _photoStorageReference.child(fileName);
+    //final firebase_storage.Reference uploadTask = photoRef.putFile(image);
+    final metadata = firebase_storage.SettableMetadata(
+        contentType: 'image/jpeg',
+        customMetadata: {'picked-file-path': image .path});
+    final firebase_storage.UploadTask uploadTask = photoRef.putFile(io.File(image.path), metadata);
+   // final StorageTaskSnapshot downloadUrl = await uploadTask.onComplete;
+    final img_Link = await photoRef.getDownloadURL();
+   // String img_Link = await downloadUrl.ref.getDownloadURL();
     final ChatMessage message = _createMessageFromImage(
         img_Link,
         "TYPE_IMAGE",
@@ -369,6 +375,8 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   void _sendAnyFile() async {
+
+    /*
     File image = await FilePicker.getFile();
     final String fileName = Uuid().v4();
 
@@ -475,6 +483,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         .child(widget.own_id)
         .child("time")
         .set(new DateTime.now().toUtc().toIso8601String());
+    */
   }
 
   void _sendImageFromGallery() async {

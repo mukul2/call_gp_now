@@ -34,10 +34,10 @@ dependencies:
   shared_preferences: ^0.5.8
   http_auth: ^0.2.9
   #flutter_calendar_carousel: ^1.4.12
-  firebase_database: ^3.1.6
-  firebase_core: ^0.4.0+9
-  firebase_auth: ^0.14.0+5
-  firebase_storage: ^3.0.2
+  firebase_database: ^4.3.0
+  firebase_core: ^0.5.2+1
+  firebase_auth: ^0.18.3+1
+  firebase_storage: ^5.1.0
   image_picker: ^0.6.0+9
   uuid: ^2.0.2
   youtube_player_flutter: ^7.0.0+6
@@ -126,7 +126,7 @@ flutter:
     - chemistry.png
     - nurse.png
     - ring.mp3
-    - my_gp_logo.jpeg
+    - assets/my_gp_logo.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

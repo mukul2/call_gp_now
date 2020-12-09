@@ -35,7 +35,7 @@ Future<bool> getLoginStatus() async {
 Future setLoginStatus(bool status) async {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   SharedPreferences prefs = await _prefs;
-  prefs.setBool("isLoggedIn", status);
+prefs.setBool("isLoggedIn", status);
   prefs.setString("userType", "none");
 }
 

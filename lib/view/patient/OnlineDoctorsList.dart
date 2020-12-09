@@ -1,5 +1,6 @@
 import 'package:call_gp_now/networking/ApiProvider.dart';
 import 'package:call_gp_now/view/patient/patient_view.dart';
+import 'package:call_gp_now/view/patient/screens/SimpleDoctorProfileActivity/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';

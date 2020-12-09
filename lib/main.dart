@@ -1,28 +1,86 @@
+import 'package:call_gp_now/streams/AuthControllerStream.dart';
 import 'package:call_gp_now/utils/mySharedPreffManager.dart';
 import 'package:call_gp_now/view/doctor/doctor_view.dart';
 import 'package:call_gp_now/view/patient/patient_view.dart';
+import 'package:call_gp_now/view/patient/screens/PatientHomePage/ui.dart';
+import 'package:call_gp_now/view/patient/screens/PatientHomePage/widgets.dart';
+import 'package:call_gp_now/view/patient/screens/PatientLogin/bloc.dart';
+import 'package:call_gp_now/view/patient/screens/PatientLogin/ui.dart';
+import 'package:call_gp_now/view/patient/screens/loginMainScrn.dart';
+import 'package:call_gp_now/view/patient/screens/userSelection/bloc.dart';
+import 'package:call_gp_now/view/patient/screens/userSelection/ui.dart';
+import 'package:custom_rounded_rectangle_border/custom_rounded_rectangle_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'view/login_view.dart';
 //Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
 //?LoginUI:Center(child: Text("Logged user"))) );
+void main() => runApp(
 
-void main() => runApp(MyApp());
+
+    MyApp()
+);
+
+var allreadyAtPatient = false;
+var allreadyAtDoc = false;
 
 class MyApp extends StatelessWidget {
+
+
+
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'Poppins',  primaryColor: Colors.blue,
-          accentColor: Colors.blueAccent,),
+        theme: ThemeData(
+          fontFamily: 'Poppins',
+          primaryColor: Colors.blue,
+          accentColor: Colors.blueAccent,
+        ),
         title: 'My GP',
-        home: projectWidget(context));
+        // home: projectWidget(context));
+        home: StreamBuilder<LoginStatus>(
+            stream: UserAuthStream.getInstance().onAuthChanged,
+            initialData: LoginStatus.unknown,
+            builder: (c, snapshot) {
+              final state = snapshot.data;
+              print("main some state came "+state.toString());
+              if (state == LoginStatus.loggedAsPat  ) {
+                return PatientAPP();
+              } else if (state == LoginStatus.loggedAsDoc ) {
+
+                return DoctorAPP();
+              } else if (state == LoginStatus.loggedOut) {
+
+                return  SelectUserScreen();
+              } else if (state == LoginStatus.unknown) {
+
+                 return Scaffold(
+                  body: Center(child: Image.asset("assets/my_gp_logo.jpeg",height: 200,width: 200,),),
+                );
+
+              }
+
+              return  Scaffold(body: Center(child:Text("Default Route"),),);
+            })
+    );
   }
 }
+
+
+
+
+
+
+
+
+
+
 
 Widget projectWidget(BuildContext context) {
   //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginUI()));
@@ -30,10 +88,44 @@ Widget projectWidget(BuildContext context) {
   //runApp(MyApp());
   //getLoginStatus();
 
-  Future.delayed(const Duration(milliseconds: 2000), () {
-    getLoginStatus();
-    runApp(LoginUI());
-  });
+  if (true) {
+    Future.delayed(const Duration(milliseconds: 2000), () async {
+      //getLoginStatus();
+      bool isLoggedIn = false;
+      String type = "";
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      SharedPreferences prefs = await _prefs;
+      isLoggedIn = ((prefs.getBool("isLoggedIn") == null) |
+                  prefs.getBool("isLoggedIn") ==
+              false)
+          ? true
+          : (isLoggedIn = true);
+
+      print("1");
+
+      if (isLoggedIn) {
+        print("2");
+        type = prefs.getString("userType");
+        print(type);
+        if (type == "d") {
+          print("3");
+          mainD();
+        } else if (type == "p") {
+          print("4");
+          mainP();
+        } else {
+          print("5");
+          LoginUI();
+        }
+      } else {
+        print("6");
+        LoginUI();
+      }
+
+      runApp(LoginUI());
+    });
+
+  }
 
   return new Scaffold(
       body: Container(
@@ -119,4 +211,15 @@ Widget navigateUser() {
       child: Text("Please wait"),
     ),
   );
+}
+
+void showThisToast(String s) {
+  Fluttertoast.showToast(
+      msg: s,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0);
 }

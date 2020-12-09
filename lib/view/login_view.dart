@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:call_gp_now/models/login_response.dart';
+import 'package:call_gp_now/streams/AuthControllerStream.dart';
 import 'package:call_gp_now/utils/commonWidgets.dart';
 import 'package:call_gp_now/utils/mySharedPreffManager.dart';
 import 'package:call_gp_now/view/patient/another_map.dart';
 import 'package:call_gp_now/view/patient/myMapViewActivity.dart';
 import 'package:call_gp_now/view/patient/patient_view.dart';
+import 'package:call_gp_now/view/patient/screens/DoctorLogin/ui.dart';
+import 'package:call_gp_now/view/patient/screens/PatientLogin/ui.dart';
 import 'package:custom_rounded_rectangle_border/custom_rounded_rectangle_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -59,7 +62,6 @@ final String _baseUrl_image = "https://appointmentbd.com/";
 void main() => runApp(LoginUI());
 var PHONE_NUMBER_VERIFIED;
 
-
 class LoginUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -68,8 +70,11 @@ class LoginUI extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       color: Colors.blueAccent,
-      theme: ThemeData(fontFamily: 'Poppins',  primaryColor: Colors.blue,
-        accentColor: Colors.blueAccent,),
+      theme: ThemeData(
+        fontFamily: 'Poppins',
+        primaryColor: Colors.blue,
+        accentColor: Colors.blueAccent,
+      ),
       title: appTitle,
       home: Scaffold(
         // body: MyCustomForm(),
@@ -137,7 +142,6 @@ Widget ChooseUserType(BuildContext context) {
                           context,
                           MaterialPageRoute(
                               builder: (context) => NewPatientLoginForm()));
-
                     },
                     color: Colors.white,
                     child: Text(
@@ -152,7 +156,7 @@ Widget ChooseUserType(BuildContext context) {
             Padding(
               padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -191,7 +195,6 @@ Widget ChooseUserType(BuildContext context) {
                 ),
               ),
             ),
-
           ],
         ),
       ),
@@ -321,568 +324,12 @@ class _ChooseUserTypeActivityState extends State<ChooseUserTypeActivity> {
 }
 
 //start
-class NewPatientLoginForm extends StatefulWidget {
-  @override
-  NewPatientLoginFormtate createState() {
-    return NewPatientLoginFormtate();
-  }
-}
 
-// Create a corresponding State class.
-// This class holds data related to the form.
-class NewPatientLoginFormtate extends State<NewPatientLoginForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a GlobalKey<FormState>,
-  // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>();
-  String email, password;
-  String myMessage = "Submit";
-
-  Widget StandbyWid = Text(
-    "Login",
-    style: TextStyle(color: Colors.white, fontSize: 18),
-  );
-  LoginResponse _loginResponse;
-
-  @override
-  Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
-    FocusNode myFocusNode = new FocusNode();
-    FocusNode myFocusNode2 = new FocusNode();
-    return Scaffold(
-        body: Container(
-      color: Colors.white,
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(padding: EdgeInsets.fromLTRB(15, 00, 0, 30)),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20, 10, 0, 00),
-              child: InkWell(
-                onTap: () {},
-                child: Icon(
-                  Icons.arrow_back_outlined,
-                  size: 32,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20, 10, 5, 15),
-              child:  Text(
-                "Welcome Back",
-                style: TextStyle(
-                  // color: Color(0xFF34448c),
-                    fontSize: 25,
-                    ),
-              ),
-            ),
-
-
-            Padding(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextFormField(
-                focusNode: myFocusNode,
-                style: TextStyle(
-                  color: Colors.blue,
-
-                ),
-                initialValue: "",
-                validator: (value) {
-                  email = value;
-                  if (value.isEmpty) {
-                    return 'Please enter Email';
-                  }
-                  return null;
-                },
-                cursorColor: Colors.blue,
-                decoration: InputDecoration(
-                    fillColor: Color.fromARGB(255, 234, 234, 234), filled: true,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 234, 234, 234), width: 10.0),
-                    ),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 234, 234, 234), width: 10.0)),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 234, 234, 234), width: 10.0)),
-                    labelText: "Email",
-                    focusColor:Colors.blue,
-                    labelStyle: TextStyle(
-                        color: Colors.blue)),
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: TextFormField(
-                focusNode: myFocusNode2,
-                style: TextStyle(
-                  color: Colors.blue,
-                ),
-                initialValue: "",
-                validator: (value) {
-                  password = value;
-                  if (value.isEmpty) {
-                    return 'Please enter Password';
-                  }
-                  return null;
-                },
-                cursorColor: Color.fromARGB(255, 189, 62, 68),
-                decoration: InputDecoration(
-                    fillColor: Color.fromARGB(255, 234, 234, 234), filled: true,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 234, 234, 234), width: 10.0),
-                    ),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 234, 234, 234))),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 234, 234, 234))),
-                    labelText: "Password",
-                    focusColor: Color.fromARGB(255, 189, 62, 68),
-                    labelStyle: TextStyle(
-                        color: Colors.blue,)),
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-              child: SizedBox(
-                  height: 55,
-                  width: double.infinity, // match_parent
-                  child: RaisedButton(
-                    color: Colors.blue,
-                    onPressed: () async {
-                      // Validate returns true if the form is valid, or false
-                      // otherwise.
-                      if (_formKey.currentState.validate()) {
-                        // If the form is valid, display a Snackbar.
-                        setState(() {
-                          StandbyWid = Text(
-                            "Please wait",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          );
-                        });
-
-                        LoginResponse loginResponse =
-                            await performLogin(email, password);
-                        print(loginResponse.toString());
-                        //  showThisToast(loginResponse.message);
-
-                        //  showThisToast(loginResponse.toString());
-
-                        if (loginResponse != null && loginResponse.status) {
-                          setState(() {
-                            StandbyWid = Text(loginResponse.message);
-                          });
-                          setLoginStatus(true);
-                          // AUTH_KEY = "Bearer " + loginResponse.accessToken;
-                          USER_ID = loginResponse.userInfo.id.toString();
-                          setUserType(loginResponse.userInfo.userType);
-
-                          Future<SharedPreferences> _prefs =
-                              SharedPreferences.getInstance();
-                          SharedPreferences prefs = await _prefs;
-                          prefs.setString(
-                              "uid", loginResponse.userInfo.id.toString());
-                          prefs.setString(
-                              "uname", loginResponse.userInfo.name.toString());
-                          prefs.setString("uphone",
-                              loginResponse.userInfo.phone.toString());
-                          prefs.setString("uphoto",
-                              loginResponse.userInfo.photo.toString());
-                          prefs.setString("uemail",
-                              loginResponse.userInfo.email.toString());
-                          prefs.setString("utype",
-                              loginResponse.userInfo.userType.toString());
-                          prefs.setString(
-                              "udes",
-                              loginResponse.userInfo.designationTitle
-                                  .toString());
-                          prefs.setString(
-                              "auth", "Bearer " + loginResponse.accessToken);
-                          prefs.setBool("isLoggedIn", true);
-
-                          if (loginResponse.userInfo.userType.contains("d")) {
-                            //  showThisToast("doctor");
-                            DOC_HOME_VISIT = loginResponse.userInfo.home_visits;
-                            //doctor
-                            mainD();
-                          } else if (loginResponse.userInfo.userType
-                              .contains("p")) {
-                            //patient
-                            //  showThisToast("patient");
-
-                            mainP();
-                            // mainMap();
-//                      Navigator.push(
-//                          context, MaterialPageRoute(builder: (context) => MyMaps()));
-                          } else {
-                            //unknwon user
-                            showThisToast("Unknown user");
-                          }
-                        } else {
-                          setState(() {
-                            StandbyWid = Text(
-                              "Wrong email or password",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                            );
-                          });
-
-                          //  showThisToast(loginResponse.message);
-                        }
-                      }
-                    },
-                    child: StandbyWid,
-                  )),
-            ),
-
-
-            Padding(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-              child: InkWell(
-                onTap: (){
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              CheckPhoneIntegForm("p")));
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 50,
-                  child: Center(
-                    child: Text(
-                      "Sign Up Here",
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  decoration: decoration,
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FindAccountActivity()));
-              },
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                  child: Text(
-                    "Forgot password ?",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
-  }
-}
 //end
-
 
 //start
-class NewDoctorLoginForm extends StatefulWidget {
-  @override
-  NewDoctorLoginFormstate createState() {
-    return NewDoctorLoginFormstate();
-  }
-}
 
-// Create a corresponding State class.
-// This class holds data related to the form.
-class NewDoctorLoginFormstate extends State<NewDoctorLoginForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a GlobalKey<FormState>,
-  // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>();
-  String email, password;
-  String myMessage = "Submit";
-
-  Widget StandbyWid = Text(
-    "Login",
-    style: TextStyle(color: Colors.white, fontSize: 18),
-  );
-  LoginResponse _loginResponse;
-
-  @override
-  Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
-    FocusNode myFocusNode = new FocusNode();
-    FocusNode myFocusNode2 = new FocusNode();
-    return Scaffold(
-        body: Container(
-          color: Colors.white,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(padding: EdgeInsets.fromLTRB(15, 00, 0, 30)),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20, 10, 0, 00),
-                  child: InkWell(
-                    onTap: () {},
-                    child: Icon(
-                      Icons.arrow_back_outlined,
-                      size: 32,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20, 10, 5, 15),
-                  child:  Text(
-                    "Welcome Back",
-                    style: TextStyle(
-                      // color: Color(0xFF34448c),
-                      fontSize: 25,
-                    ),
-                  ),
-                ),
-
-
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: TextFormField(
-                    focusNode: myFocusNode,
-                    style: TextStyle(
-                      color: Colors.blue,
-
-                    ),
-                    initialValue: "",
-                    validator: (value) {
-                      email = value;
-                      if (value.isEmpty) {
-                        return 'Please enter Email';
-                      }
-                      return null;
-                    },
-                    cursorColor: Colors.blue,
-                    decoration: InputDecoration(
-                        fillColor: Color.fromARGB(255, 234, 234, 234), filled: true,
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 234, 234, 234), width: 10.0),
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 234, 234, 234), width: 10.0)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 234, 234, 234), width: 10.0)),
-                        labelText: "Email",
-                        focusColor:Colors.blue,
-                        labelStyle: TextStyle(
-                            color: Colors.blue)),
-                    keyboardType: TextInputType.emailAddress,
-                    autocorrect: false,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: TextFormField(
-                    focusNode: myFocusNode2,
-                    style: TextStyle(
-                      color: Colors.blue,
-                    ),
-                    initialValue: "",
-                    validator: (value) {
-                      password = value;
-                      if (value.isEmpty) {
-                        return 'Please enter Password';
-                      }
-                      return null;
-                    },
-                    cursorColor: Color.fromARGB(255, 189, 62, 68),
-                    decoration: InputDecoration(
-                        fillColor: Color.fromARGB(255, 234, 234, 234), filled: true,
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 234, 234, 234), width: 10.0),
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 234, 234, 234))),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 234, 234, 234))),
-                        labelText: "Password",
-                        focusColor: Color.fromARGB(255, 189, 62, 68),
-                        labelStyle: TextStyle(
-                          color: Colors.blue,)),
-                    keyboardType: TextInputType.emailAddress,
-                    autocorrect: false,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-                  child: SizedBox(
-                      height: 55,
-                      width: double.infinity, // match_parent
-                      child: RaisedButton(
-                        color: Colors.blue,
-                        onPressed: () async {
-                          // Validate returns true if the form is valid, or false
-                          // otherwise.
-                          if (_formKey.currentState.validate()) {
-                            // If the form is valid, display a Snackbar.
-                            setState(() {
-                              StandbyWid = Text(
-                                "Please wait",
-                                style: TextStyle(color: Colors.white, fontSize: 18),
-                              );
-                            });
-
-                            LoginResponse loginResponse =
-                            await performLogin(email, password);
-                            print(loginResponse.toString());
-                            //  showThisToast(loginResponse.message);
-
-                            //  showThisToast(loginResponse.toString());
-
-                            if (loginResponse != null && loginResponse.status) {
-                              setState(() {
-                                StandbyWid = Text(loginResponse.message);
-                              });
-                              setLoginStatus(true);
-                              // AUTH_KEY = "Bearer " + loginResponse.accessToken;
-                              USER_ID = loginResponse.userInfo.id.toString();
-                              setUserType(loginResponse.userInfo.userType);
-
-                              Future<SharedPreferences> _prefs =
-                              SharedPreferences.getInstance();
-                              SharedPreferences prefs = await _prefs;
-                              prefs.setString(
-                                  "uid", loginResponse.userInfo.id.toString());
-                              prefs.setString(
-                                  "uname", loginResponse.userInfo.name.toString());
-                              prefs.setString("uphone",
-                                  loginResponse.userInfo.phone.toString());
-                              prefs.setString("uphoto",
-                                  loginResponse.userInfo.photo.toString());
-                              prefs.setString("uemail",
-                                  loginResponse.userInfo.email.toString());
-                              prefs.setString("utype",
-                                  loginResponse.userInfo.userType.toString());
-                              prefs.setString(
-                                  "udes",
-                                  loginResponse.userInfo.designationTitle
-                                      .toString());
-                              prefs.setString(
-                                  "auth", "Bearer " + loginResponse.accessToken);
-                              prefs.setBool("isLoggedIn", true);
-
-                              if (loginResponse.userInfo.userType.contains("d")) {
-                                //  showThisToast("doctor");
-                                DOC_HOME_VISIT = loginResponse.userInfo.home_visits;
-                                //doctor
-                                mainD();
-                              } else if (loginResponse.userInfo.userType
-                                  .contains("p")) {
-                                //patient
-                                //  showThisToast("patient");
-
-                                mainP();
-                                // mainMap();
-//                      Navigator.push(
-//                          context, MaterialPageRoute(builder: (context) => MyMaps()));
-                              } else {
-                                //unknwon user
-                                showThisToast("Unknown user");
-                              }
-                            } else {
-                              setState(() {
-                                StandbyWid = Text(
-                                  "Wrong email or password",
-                                  style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
-                                );
-                              });
-
-                              //  showThisToast(loginResponse.message);
-                            }
-                          }
-                        },
-                        child: StandbyWid,
-                      )),
-                ),
-
-
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: InkWell(
-                    onTap: (){
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  CheckPhoneIntegForm("d")));
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 50,
-                      child: Center(
-                        child: Text(
-                          "Sign Up Here",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      decoration: decoration,
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FindAccountActivity()));
-                  },
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                      child: Text(
-                        "Forgot password ?",
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ));
-  }
-}
 //end
-
 
 //start
 class NewLoginUI extends StatefulWidget {
@@ -1066,7 +513,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                           setState(() {
                             StandbyWid = Text(loginResponse.message);
                           });
-                          setLoginStatus(true);
+                          //setLoginStatus(true);
                           // AUTH_KEY = "Bearer " + loginResponse.accessToken;
                           USER_ID = loginResponse.userInfo.id.toString();
                           setUserType(loginResponse.userInfo.userType);
@@ -1098,13 +545,13 @@ class MyCustomFormState extends State<MyCustomForm> {
                             //  showThisToast("doctor");
                             DOC_HOME_VISIT = loginResponse.userInfo.home_visits;
                             //doctor
-                            mainD();
+                            // mainD();
                           } else if (loginResponse.userInfo.userType
                               .contains("p")) {
                             //patient
                             //  showThisToast("patient");
 
-                            mainP();
+                            // mainP();
                             // mainMap();
 //                      Navigator.push(
 //                          context, MaterialPageRoute(builder: (context) => MyMaps()));
@@ -1112,6 +559,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                             //unknwon user
                             showThisToast("Unknown user");
                           }
+                          UserAuthStream.getInstance().signIn(loginResponse.userInfo.userType.toString());
                         } else {
                           setState(() {
                             StandbyWid = Text(
@@ -1529,12 +977,16 @@ class ShowFindAccountActivityState extends State<ShowFindAccountActivity> {
                 child: ListTile(
                   onTap: () {
                     //PhoneVerificationScreenRecovery
+
+                    /*
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
                                 PhoneVerificationScreenRecovery(
                                     widget.foundAccout["profile"]["phone"])));
+
+                     */
                   },
                   leading: Icon(Icons.done, color: Colors.blue),
                   title: Text(
@@ -1891,12 +1343,21 @@ class CheckPhoneIntegFormState extends State<CheckPhoneIntegForm> {
                           //false to avoid phone verification
 
                           if (true) {
+                            /*
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         PhoneVerificationScreen(
                                             widget.userType)));
+
+                             */
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        LoginPageWithVerification()));
                           } else {
                             if (widget.userType == "p") {
                               Navigator.push(
@@ -2086,12 +1547,9 @@ class _SignupActivityPatientState extends State<SignupActivityPatient> {
                           Future<SharedPreferences> _prefs =
                               SharedPreferences.getInstance();
                           SharedPreferences prefs = await _prefs;
-                          prefs.setString(
-                              "uphoto", "");
-                          prefs.setString(
-                              "uemail", resp["user_info"]["email"]);
-                          prefs.setString(
-                              "uphoto", resp["user_info"]["photo"]);
+                          prefs.setString("uphoto", "");
+                          prefs.setString("uemail", resp["user_info"]["email"]);
+                          prefs.setString("uphoto", resp["user_info"]["photo"]);
                           prefs.setString(
                               "uid", resp["user_info"]["id"].toString());
                           prefs.setString(
@@ -2135,8 +1593,8 @@ class _SignupActivityPatientState extends State<SignupActivityPatient> {
   }
 
   String getVerifiedNumber() {
-    FirebaseUser user = FirebaseAuth.instance.currentUser() as FirebaseUser;
-    return user.phoneNumber;
+   // FirebaseUser user = FirebaseAuth.instance.currentUser() as FirebaseUser;
+    //return user.phoneNumber;
   }
 }
 
@@ -2564,7 +2022,7 @@ class _SignupActivityDoctorState extends State<SignupActivityDoctor> {
                           prefs.setString(
                               "auth", "Bearer " + resp["access_token"]);
                           prefs.setBool("isLoggedIn", true);
-                         // showThisToast("erre 2"+resp.statusCode.toString());
+                          // showThisToast("erre 2"+resp.statusCode.toString());
 
                           setState(() {
                             StandbyWid = Text(
@@ -2635,9 +2093,9 @@ class _SignupActivityDoctorState extends State<SignupActivityDoctor> {
                                     );
                                   });
 
-
-                                 // mainD();
-                                  showThisToast("Signup Compleated.Please login");
+                                  // mainD();
+                                  showThisToast(
+                                      "Signup Compleated.Please login");
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();
                                   //Navigator.of(context).pop();
@@ -2667,8 +2125,8 @@ class _SignupActivityDoctorState extends State<SignupActivityDoctor> {
   }
 
   String getVerifiedNumber() {
-    FirebaseUser user = FirebaseAuth.instance.currentUser() as FirebaseUser;
-    return user.phoneNumber;
+    //FirebaseUser user = FirebaseAuth.instance.currentUser() as FirebaseUser;
+    //return user.phoneNumber;
   }
 }
 
@@ -2704,7 +2162,7 @@ Future<String> uploadMultipleImage(
     print(value);
   });
 }
-
+/*
 class PhoneVerificationScreenRecovery extends StatelessWidget {
   final _phoneController = TextEditingController();
   final _codeController = TextEditingController();
@@ -2819,6 +2277,8 @@ class PhoneVerificationScreenRecovery extends StatelessWidget {
     ));
   }
 }
+
+ */
 
 void showThisToast(String s) {
   Fluttertoast.showToast(

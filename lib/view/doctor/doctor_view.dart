@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:call_gp_now/chat/model/chat_message.dart';
+import 'package:call_gp_now/streams/AuthControllerStream.dart';
 import 'package:call_gp_now/utils/mySharedPreffManager.dart';
 import 'package:call_gp_now/view/login_view.dart';
 import 'package:call_gp_now/view/patient/sharedActivitys.dart';
@@ -107,14 +108,14 @@ class DoctorAPP extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(fontFamily: 'Poppins'),
-        home: MyHomePage(title: 'Flutter Demo Home Page'),
+        home: MyHomePageD(title: 'Flutter Demo Home Page'),
       ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class MyHomePageD extends StatefulWidget {
+  MyHomePageD({Key key, this.title}) : super(key: key);
   List todayList = [];
   dynamic all_info;
   List all_urgent_care_req = [];
@@ -138,7 +139,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+class _MyHomePageState extends State<MyHomePageD> with WidgetsBindingObserver {
   getVdoAppDataToday() async {
     body = <String, String>{'user_type': "doctor", 'id': UID};
     String apiResponse =
@@ -1456,15 +1457,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     return AppWidget(widget, context);
   }
 
-  Widget AppWidget(MyHomePage widget, BuildContext context) {
+  Widget AppWidget(MyHomePageD widget, BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: new IconThemeData(color: Colors.blue),
+        iconTheme: new IconThemeData(color: Colors.white),
         title: Text(
           _titles[bottomSelectedIndex],
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.white,
         shadowColor: Colors.blue,
         elevation: 5.0,
       ),
@@ -7073,7 +7073,7 @@ class _BlogState extends State<Blog> {
   }
 }
 
-Widget myDrawer(MyHomePage widget) {
+Widget myDrawer(MyHomePageD widget) {
   return Drawer(
     // Add a ListView to the drawer. This ensures the user can scroll
     // through the options in the drawer if there isn't enough vertical
@@ -7184,8 +7184,23 @@ Widget myDrawer(MyHomePage widget) {
             ref.child("is_online").set(false);
             ref.child("fees").set("Free");
             ref.child("last_online").set(new DateTime.now().toString());
-            setLoginStatus(false);
-            runApp(LoginUI());
+            //setLoginStatus(false);
+            //runApp(LoginUI());
+            UserAuthStream.getInstance().signOut();
+          //  UserAuthStream.getInstance().dataReload();
+          },
+        ),
+        ListTile(
+          leading: SizedBox(
+            height: 25,
+            width: 25,
+            child: Image.asset("assets/logout.png"),
+          ),
+          title: Text('MOVE TO patient'),
+          onTap: () {
+            //setLoginStatus(false);
+            //runApp(LoginUI());
+            UserAuthStream.getInstance().changeUserTYPE("p");
           },
         ),
       ],
